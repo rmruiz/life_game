@@ -50,14 +50,13 @@ def draw(grid):
 def mainloop():
     width = 64
     height = 48
-    clear_device()
     set_color(Color.BLACK)
     grid = make_random_grid(width, height)
     while is_run():
-      if delay_jfps(60):
-         clear_device()
-         draw(grid)
-         grid = next_gen(grid)
+       delay_fps(10)
+       clear_device()
+       draw(grid)
+       grid = next_gen(grid)
 
 def main():
     init_graph(max_width, max_height)
