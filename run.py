@@ -1,4 +1,4 @@
-from easygraphics import *
+from easygraphics import easy_run, close_graph, set_fill_color, set_caption, Color, RenderMode, draw_polygon, set_color, clear_device, is_run, init_graph, delay_fps, set_render_mode
 from random import randint
 from math import floor
 
@@ -8,14 +8,14 @@ max_height = 480
 def make_random_grid(width, height):
     return [[randint(0,1) for i in range(width)] for j in range(height)]
 
-def get_grid(grid,x,y):
+def get_neighbor(grid, x, y):
     #if out of bound return 0
     if x==-1 or y==-1 or y>len(grid)-1 or x>len(grid[0])-1:
        return 0
     return grid[y][x]
 
-def next_gen_cell(grid,x,y):
-    neighbors = get_grid(grid,x-1,y-1) + get_grid(grid,x,y-1) + get_grid(grid,x+1,y-1) + get_grid(grid,x-1,y) + get_grid(grid,x+1,y) + get_grid(grid,x-1,y+1) + get_grid(grid,x,y+1) + get_grid(grid,x+1,y+1)
+def next_gen_cell(grid, x, y):
+    neighbors = get_neighbor(grid,x-1,y-1) + get_neighbor(grid,x,y-1) + get_neighbor(grid,x+1,y-1) + get_neighbor(grid,x-1,y) + get_neighbor(grid,x+1,y) + get_neighbor(grid,x-1,y+1) + get_neighbor(grid,x,y+1) + get_neighbor(grid,x+1,y+1)
     
     #life game rules
     if grid[y][x] == 1 and (neighbors == 2 or neighbors == 3):
@@ -26,20 +26,21 @@ def next_gen_cell(grid,x,y):
        return 0
 
 def next_gen(grid):
-    y_size = len(grid)
-    x_size = len(grid[0])
+    x_range = range(len(grid[0]))
+    y_range = range(len(grid))
     
-    new_grid = [[next_gen_cell(grid,i,j) for i in range(x_size)] for j in range(y_size)]
+    new_grid = [[next_gen_cell(grid,i,j) for i in x_range] for j in y_range]
     return new_grid
 
 def draw(grid):
-    y_size = len(grid)
-    x_size = len(grid[0])
-    for i in range(x_size):
-       for j in range(y_size):
+    x_range = range(len(grid[0]))
+    y_range = range(len(grid))
+
+    for i in x_range:
+       for j in y_range:
           set_fill_color(Color.WHITE if grid[j][i]==0 else Color.BLACK)
-          cell_height = floor(max_height/y_size)
-          cell_width = floor(max_width/x_size)
+          cell_height = floor(max_height/len(grid))
+          cell_width = floor(max_width/len(grid[0]))
           x0 = i * cell_width
           x1 = (i+1) * cell_width
           y0 = j * cell_height
@@ -48,8 +49,8 @@ def draw(grid):
     return
 
 def mainloop():
-    width = 64
-    height = 48
+    width = floor(max_width / 10)
+    height = floor(max_height / 10)
     set_color(Color.BLACK)
     grid = make_random_grid(width, height)
     while is_run():
@@ -61,6 +62,7 @@ def mainloop():
 def main():
     init_graph(max_width, max_height)
     set_render_mode(RenderMode.RENDER_MANUAL)
+    set_caption("Game of Life")
     mainloop()
     close_graph()
 
